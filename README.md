@@ -15,6 +15,8 @@ Python:
 5) python -m venv venv
 6) run .\venv\Scripts\Activate.ps1 to activate the virtual evn
 7) pip install fastapi uvicorn
-8) 
+8) pip install fastapi-cors
+9) 
+
 
 
