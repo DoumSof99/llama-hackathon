@@ -8,6 +8,13 @@ React:
 1) npm install
 
 Python:
-1) Python
-2) pip install fastapi
-3) 
+1) install Python
+2) PowerShell select "Run as Administrator".
+3) run Get-ExecutionPolicy
+4) Set-ExecutionPolicy RemoteSigned and select Y
+5) python -m venv venv
+6) run .\venv\Scripts\Activate.ps1 to activate the virtual evn
+7) pip install fastapi uvicorn
+8) 
+
+
