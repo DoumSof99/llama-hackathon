@@ -1,12 +1,39 @@
-import { Form } from "react-router-dom";
 import FormInput from "./FormInput.jsx";
 import Divider from './Divider.jsx';
 import FormCategory from "./FormCategory.jsx";
 import styles from '../../cssModules/Form.module.css';
+import axios from 'axios';
+
+
+
 
 function FormComponent() {
+  async function handleSubmit(event) {
+    try {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = {
+        frontendFramework : formData.get('frontendFramework'),
+        frontendLanguage: formData.get('frontendLanguage'),
+        frontendBuildTool: formData.get('buildTool'),
+        backendFramework: formData.get('backendFramework'),
+        backendEnvironment: formData.get('environment'),
+        backendLanguage: formData.get('backendLanguage'),
+        backendDatabase: formData.get('database'),
+      };
+      
+      console.log(data);
+  
+      // const response = await axios.post('http://localhost:8000/suggest' , { data });
+    } catch(error) {
+      console.error('There was an error' , error);
+    }
+  };
+
+
   return (
-    <Form>
+    <form onSubmit={handleSubmit}>
       <div>
         <h3 className={styles.h3}>Your Technologies</h3>
       </div>
@@ -18,7 +45,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Framework'
-              name='inut'
+              name='frontendFramework'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -27,7 +54,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Language'
-              name='inut'
+              name='frontendLanguage'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -36,7 +63,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Build Tool'
-              name='inut'
+              name='buildTool'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -55,7 +82,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Framework'
-              name='inut'
+              name='backendFramework'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -64,7 +91,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Environment'
-              name='inut'
+              name='environment'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -73,7 +100,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Language'
-              name='inut'
+              name='backendLanguage'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -82,7 +109,7 @@ function FormComponent() {
             <FormInput 
               id='dropdown'
               label='Database'
-              name='inut'
+              name='database'
               value1='Node.js'
               value2='React.js'
               value3='Express.js'
@@ -96,10 +123,12 @@ function FormComponent() {
         <p className={styles.p}>
           For instructions, <span className={styles.span}>Click here.</span>
         </p>
-        <button className={styles.btn}>Submit</button>
+        <button type="submit" className={styles.btn}>Submit</button>
       </div>
-    </Form>
+    </form>
   )
 }
 
 export default FormComponent;
+
+

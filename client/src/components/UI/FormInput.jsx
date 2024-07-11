@@ -5,7 +5,7 @@ function FormInput({ id, label, name, value1, value2, value3, value4 }) {
   return (
     <div className={styles.select_container}>
       <label className={styles.label}>{label}</label>
-      <select className={styles.select_container} id={id} name={name}>
+      <select className={styles.select_container} id={id} name={name} required>
         <option value="" defaultValue >Choose an option</option>
         <option value={value1}>{value1}</option>
         <option value={value2}>{value2}</option>
@@ -17,3 +17,39 @@ function FormInput({ id, label, name, value1, value2, value3, value4 }) {
 }
 
 export default FormInput
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// data = {
+//   frontendFramwork :  'xxx',
+//   frontendFramwork : 'sad',
+// }
