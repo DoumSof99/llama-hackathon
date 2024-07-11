@@ -16,8 +16,9 @@ Python:
 6) run .\venv\Scripts\Activate.ps1 to activate the virtual evn
 7) pip install fastapi uvicorn
 8) pip install fastapi-cors
-9) uvicorn main:app --reload
-10) 
+9) pip install langchain_community langchain_core
+10) run uvicorn main:app --reload
+11) 
 
 
 
