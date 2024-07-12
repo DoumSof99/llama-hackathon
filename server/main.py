@@ -1,64 +1,61 @@
-from fastapi import FastAPI, HTTPException
+from flask import Flask, request, Response, jsonify
+from flask_cors import CORS
+import time
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from fastapi.responses import StreamingResponse
-import asyncio
 
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app = Flask(__name__)
+CORS(app)  
 
 class SuggestionRequest(BaseModel):
-    input: str 
+    backendDatabase: str
+    backendEnvironment: str
+    backendFramework: str
+    backendLanguage: str
+    frontendBuildTool: str
+    frontendFramework: str
+    frontendLanguage: str
 
-@app.post("/")
-async def suggest_project(request: SuggestionRequest):
-    user_input = request.input
-
-    # TODO
-    return StreamingResponse(run_llama3_model(user_input), media_type="text/event-stream")
-
-    # Synchronous way (works)
-    # suggestion = await run_llama3_model(user_input)  
-    # return {"suggestion": suggestion}
-
-async def run_llama3_model(input_text: str): #TODO #-> str:
+def generate_suggestions(input_text: str):
     llm = ChatOllama(
         model="llama3",
         keep_alive=-1,
-        temperature=0,
-        max_new_tokens=512
+        temperature=0.9,
+        max_new_tokens=256
     )
 
-    prompt = ChatPromptTemplate.from_template("Provide 3 project ideas for developers based on these technologies: {input}")
+    prompt = ChatPromptTemplate.from_template("Provide a project idea for developers based on these technologies and give a brief description of the implementation: {input}")
     chain = prompt | llm | StrOutputParser()
 
-    # TODO
+    try:
+        for result in chain.stream({"input": input_text}):
+            yield result
+    except Exception as e:
+        yield f"Error generating suggestions: {e}"
 
-    # Synchronous way (works)
-    # response = chain.invoke({"input": input_text}) 
-    # suggestions = response.split('\n\n')[:3]
+def generate_response(input_text):
+    for suggestion in generate_suggestions(input_text):
+        # for word in suggestion.split():
+        #     time.sleep(1)  # Simulate delay
+        yield f"{suggestion} "
+        time.sleep(0.5)
 
-    # Asynchronous way
-    suggestions = []
-    async for chunk in chain.stream({"input": input_text}):
-        suggestions.append(chunk)
-        if len(suggestions) >= 3:
-            break
+@app.route('/process', methods=['POST'])
+def process():
+    data = request.get_json()
+    input_text = f"""
+    Backend Database: {data['backendDatabase']}
+    Backend Environment: {data['backendEnvironment']}
+    Backend Framework: {data['backendFramework']}
+    Backend Language: {data['backendLanguage']}
+    Frontend Build Tool: {data['frontendBuildTool']}
+    Frontend Framework: {data['frontendFramework']}
+    Frontend Language: {data['frontendLanguage']}
+    """
 
-    for suggestion in suggestions:
-        yield f"data: {suggestion}\n\n"
-        await asyncio.sleep(1) # May not need
+    return Response(generate_response(input_text), mimetype='text/plain')
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == '__main__':
+    app.run(port=8000)
