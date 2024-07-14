@@ -86,6 +86,14 @@
   opacity: 0.8;
 } 
 
+.p2 {
+  font-size: 0.8rem;
+  font-family: 'Montserrat';
+  opacity: 0.8;
+  text-align: center;
+  margin-bottom: 1rem
+}
+
 .span {
   font-weight: 700;
   cursor: pointer;
@@ -100,6 +108,7 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+  border: 1px solid black;
 }
 
 
@@ -107,6 +116,10 @@
 
 /* WIDTH */
 @media (max-width: 480px) {
+  .section {
+    height: 100vh;
+  }
+
   .container {
     width: 90%;
     padding: 2rem 1rem 0rem 1rem;
@@ -241,7 +254,7 @@
 
 @media (min-width: 1025px) and (max-width: 1444px) {
   .container {
-    width: 60%;
+    width: 70%;
     padding: 2rem 1rem 0rem 1rem;
   }
 
@@ -280,5 +293,14 @@
   
   .btn {
     padding: 0.7rem 2.5rem;
+  }
+}
+
+
+
+
+@media (max-height: 800px) {
+  .section {
+    height: 100%;
   }
 }

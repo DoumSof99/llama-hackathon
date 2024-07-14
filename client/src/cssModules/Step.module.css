@@ -130,7 +130,7 @@
   }
 
   .main_container {
-    width: 60%;
+    width: 70%;
     gap: 4rem;
   }
 
@@ -143,5 +143,15 @@
   .p {
     font-size: 1.1rem;
     margin-top: 0.8rem;
+  }
+}
+
+
+
+
+@media (max-height: 800px) {
+  .section {
+    padding-top: 6rem;
+    height: 84vh;
   }
 }

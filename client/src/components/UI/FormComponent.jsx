@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import FormInput from "./FormInput.jsx";
 import Divider from './Divider.jsx';
+import Loading from './Loading.jsx';
 import FormCategory from "./FormCategory.jsx";
 import styles from '../../cssModules/Form.module.css';
 
+import { useDispatch, useSelector } from 'react-redux'
+import { changeOutputState } from '../../reducers/index.js';
+import { changeOutputLoading } from '../../reducers/isLoadingSlice.js';
+
 function FormComponent() {
-  const [output, setOutput] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = useSelector((state) => state.loadingOutput.value);
+  const dispatch = useDispatch();
+  
 
   async function handleSubmit(event) {
+    console.log('Start');
+    dispatch(changeOutputLoading(true));
+
     event.preventDefault();
-    setIsLoading(true);
-    setOutput([]);
 
     const formData = new FormData(event.target);
     const data = {
@@ -40,14 +47,16 @@ function FormComponent() {
         const { value, done } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        setOutput((prev) => [...prev, chunk]);
+        
+        dispatch(changeOutputState(chunk));
       }
     } catch (error) {
       console.error('Error:', error);
     } finally {
-      setIsLoading(false);
+      dispatch(changeOutputLoading(false));
     }
   }
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -140,15 +149,24 @@ function FormComponent() {
         <p className={styles.p}>
           For instructions, <span className={styles.span}>Click here.</span>
         </p>
-        <button type="submit" className={styles.btn}>Submit</button>
+        <button 
+          type="submit" 
+          className={styles.btn}
+        >
+          {isLoading ? <Loading /> : 'Submit'}
+        </button>
       </div>
 
-      <div className="output">
-        {output.map((chunk, index) => (
+      {isLoading && 
+        <p className={styles.p2}>Please wait while your answer is getting processed...</p>
+      }
+      
+
+      {/* <div>
+        {output.map((chunk , index) => (
           <p key={index}>{chunk}</p>
         ))}
-      </div>
-      {isLoading && <p>Loading...</p>}
+      </div> */}
     </form>
   )
 }
