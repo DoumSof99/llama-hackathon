@@ -7,7 +7,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 app = Flask(__name__)
-CORS(app)  
+CORS(app)
 
 class SuggestionRequest(BaseModel):
     backendDatabase: str
@@ -18,7 +18,7 @@ class SuggestionRequest(BaseModel):
     frontendFramework: str
     frontendLanguage: str
 
-def generate_suggestions(input_text: str):
+def generate_response(input_text: str):
     llm = ChatOllama(
         model="llama3",
         keep_alive=-1,
@@ -31,16 +31,9 @@ def generate_suggestions(input_text: str):
 
     try:
         for result in chain.stream({"input": input_text}):
-            yield result
+            yield f"{result} "
     except Exception as e:
         yield f"Error generating suggestions: {e}"
-
-def generate_response(input_text):
-    for suggestion in generate_suggestions(input_text):
-        # for word in suggestion.split():
-        #     time.sleep(1)  # Simulate delay
-        yield f"{suggestion} "
-        time.sleep(0.5)
 
 @app.route('/process', methods=['POST'])
 def process():
