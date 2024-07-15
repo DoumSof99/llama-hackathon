@@ -6,7 +6,7 @@ import FormCategory from "./FormCategory.jsx";
 import styles from '../../cssModules/Form.module.css';
 
 import { useDispatch, useSelector } from 'react-redux'
-import { changeOutputState } from '../../reducers/index.js';
+import { changeOutputState , resetOutputState } from '../../reducers/index.js';
 import { changeOutputLoading } from '../../reducers/isLoadingSlice.js';
 
 function FormComponent() {
@@ -16,6 +16,7 @@ function FormComponent() {
 
   async function handleSubmit(event) {
     console.log('Start');
+
     dispatch(changeOutputLoading(true));
 
     event.preventDefault();
@@ -28,10 +29,14 @@ function FormComponent() {
       backendFramework: formData.get('backendFramework'),
       backendEnvironment: formData.get('environment'),
       backendLanguage: formData.get('backendLanguage'),
-      backendDatabase: formData.get('database'),
+      database: formData.get('database'),
     };
 
     try {
+      dispatch(resetOutputState());
+      const outputText = document.getElementById('outputText');
+      outputText.value = '';
+      
       const response = await fetch('http://localhost:8000/process', {
         method: 'POST',
         headers: {
@@ -109,39 +114,35 @@ function FormComponent() {
             id='dropdown'
             label='Framework'
             name='backendFramework'
-            value1='Node.js'
-            value2='React.js'
-            value3='Express.js'
-            value4='Vue.js'
           />
           <FormInput
             id='dropdown'
             label='Environment'
             name='environment'
-            value1='Node.js'
-            value2='React.js'
-            value3='Express.js'
-            value4='Vue.js'
           />
           <FormInput
             id='dropdown'
             label='Language'
             name='backendLanguage'
-            value1='Node.js'
-            value2='React.js'
-            value3='Express.js'
-            value4='Vue.js'
-          />
-          <FormInput
-            id='dropdown'
-            label='Database'
-            name='database'
-            value1='Node.js'
-            value2='React.js'
-            value3='Express.js'
-            value4='Vue.js'
           />
         </div>
+      </div>
+      <div style={{display: 'flex' , justifyContent: 'center'}}>
+        <Divider black/>
+      </div>
+
+
+      <div className={styles.box_container}>
+        <FormCategory title='Database :'/>
+        <div className={styles.formInput_container}>
+          <FormInput
+            id='dropdown'            
+            name='database'
+          />
+        </div>
+      </div>
+      <div style={{display: 'flex' , justifyContent: 'center'}}>
+        <Divider black/>
       </div>
 
 
@@ -152,6 +153,7 @@ function FormComponent() {
         <button 
           type="submit" 
           className={styles.btn}
+          disabled = {isLoading ? true : false}
         >
           {isLoading ? <Loading /> : 'Submit'}
         </button>

@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 class SuggestionRequest(BaseModel):
-    backendDatabase: str
+    database: str
     backendEnvironment: str
     backendFramework: str
     backendLanguage: str
@@ -39,7 +39,7 @@ def generate_response(input_text: str):
 def process():
     data = request.get_json()
     input_text = f"""
-    Backend Database: {data['backendDatabase']}
+    Database: {data['database']}
     Backend Environment: {data['backendEnvironment']}
     Backend Framework: {data['backendFramework']}
     Backend Language: {data['backendLanguage']}

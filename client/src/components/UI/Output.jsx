@@ -8,7 +8,7 @@ function Output() {
 
   return (
     <div className={styles.container}>
-      <textarea className={styles.textarea} value={finalOutput} readOnly/>
+      <textarea className={styles.textarea} value={finalOutput} id='outputText' readOnly/>
     </div>
   )
 }
