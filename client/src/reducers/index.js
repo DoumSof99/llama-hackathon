@@ -10,10 +10,13 @@ export const outputSlice = createSlice({
   reducers: {
     changeOutputState: (state , action) => {
       state.value = [...state.value , ...action.payload];
+    },
+    resetOutputState: (state) => {
+      state.value = [];
     }
   }
 });
 
 
-export const { changeOutputState } = outputSlice.actions;
+export const { changeOutputState , resetOutputState } = outputSlice.actions;
 export default outputSlice.reducer;
