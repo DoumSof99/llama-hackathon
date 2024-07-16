@@ -37,7 +37,7 @@ function FormComponent() {
       const outputText = document.getElementById('outputText');
       outputText.value = '';
       
-      const response = await fetch('http://localhost:8000/process', {
+      const response = await fetch('http://0.0.0.0:8000/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -37,12 +37,8 @@ def generate_response(input_text: str):
         yield f"Error generating suggestions: {e}"
 
 
-@app.route('/')
-def index():
-    return 'Flask API is running'
 
-
-@app.route('/process', methods=['POST'])
+@app.route('/', methods=['POST'])
 def process():
     data = request.get_json()
     input_text = f"""
