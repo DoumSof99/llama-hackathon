@@ -23,8 +23,7 @@ Python:
 14) pip install flask
 15) pip install flask_cors
 16) pip install langchain_community langchain_core
-17) run uvicorn main:app --reload
-18) python main.py
+17) python main.py
 
 
 
