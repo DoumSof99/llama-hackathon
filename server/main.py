@@ -22,7 +22,7 @@ def generate_response(input_text: str):
     llm = ChatOllama(
         model="llama3",
         keep_alive=-1,
-        temperature=0.9,
+        temperature=1.0,
         max_new_tokens=256
     )
 
