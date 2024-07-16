@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 import time
@@ -35,6 +36,12 @@ def generate_response(input_text: str):
     except Exception as e:
         yield f"Error generating suggestions: {e}"
 
+
+@app.route('/')
+def index():
+    return 'Flask API is running'
+
+
 @app.route('/process', methods=['POST'])
 def process():
     data = request.get_json()
@@ -51,5 +58,6 @@ def process():
     return Response(generate_response(input_text), mimetype='text/plain')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    port = int(os.environ.get('PORT', 8000))
+    app.run(host='0.0.0.0', port=port)
 
