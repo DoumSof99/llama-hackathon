@@ -7,7 +7,7 @@ import OutputSection from "./components/OutputSection.jsx";
 function App() {
   return (
     <>
-      <Navbar />
+      <Navbar aboutUs/>
       <HeroSection />
       <StepSection />
       <FormSection />
