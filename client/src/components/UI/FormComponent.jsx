@@ -12,6 +12,13 @@ import { changeOutputLoading } from '../../reducers/isLoadingSlice.js';
 function FormComponent() {
   const isLoading = useSelector((state) => state.loadingOutput.value);
   const dispatch = useDispatch();
+
+  function cleanResponse(text) {
+    // Remove unwanted formatting or text
+    // This example strips out code blocks and extraneous lines
+    return text
+      .trim();                          // Trim leading/trailing whitespace
+  }
   
 
   async function handleSubmit(event) {
@@ -37,7 +44,7 @@ function FormComponent() {
       const outputText = document.getElementById('outputText');
       outputText.value = '';
       
-      const response = await fetch('https://llama-hackathon.onrender.com', {
+      const response = await fetch('http://localhost:8000/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,16 +52,11 @@ function FormComponent() {
         body: JSON.stringify(data),
       });
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+      const responseData = await response.json();
+      const cleanedText = cleanResponse(responseData.response);
 
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        
-        dispatch(changeOutputState(chunk));
-      }
+      dispatch(changeOutputState(cleanedText));
+
     } catch (error) {
       console.error('Error:', error);
     } finally {

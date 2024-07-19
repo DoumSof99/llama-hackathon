@@ -1,40 +1,101 @@
+# import os
+# from flask import Flask, request, Response, jsonify
+# from flask_cors import CORS
+# from pydantic import BaseModel
+# import replicate
+
+# app = Flask(__name__)
+# CORS(app, resources={r"/*": {"origins": "*"}}) 
+
+# class SuggestionRequest(BaseModel):
+#     database: str
+#     backendEnvironment: str
+#     backendFramework: str
+#     backendLanguage: str
+#     frontendBuildTool: str
+#     frontendFramework: str
+#     frontendLanguage: str
+
+# def generate_response(input_text: str):
+#     for event in replicate.stream(
+#         "meta/meta-llama-3-8b",
+#         input={
+#             "top_p": 0.9,
+#             "prompt": f"Provide a project idea for developers based on these technologies and give a brief description of the implementation: {input_text}",
+#             "max_tokens": 256,
+#             "min_tokens": 0,
+#             "temperature": 0.9,
+#             "prompt_template": "{prompt}",
+#             "presence_penalty": 1.15
+#         },
+#     ):
+#         print(str(event), end="")
+
+
+
+# @app.route('/', methods=['POST'])
+# def process():
+#     data = request.get_json()
+#     input_text = f"""
+#     Database: {data['database']}
+#     Backend Environment: {data['backendEnvironment']}
+#     Backend Framework: {data['backendFramework']}
+#     Backend Language: {data['backendLanguage']}
+#     Frontend Build Tool: {data['frontendBuildTool']}
+#     Frontend Framework: {data['frontendFramework']}
+#     Frontend Language: {data['frontendLanguage']}
+#     """
+
+#     return Response(generate_response(input_text), mimetype='text/plain')
+
+# if __name__ == '__main__':
+#     port = int(os.environ.get('PORT', 8000))
+#     app.run(host='localhost', port=port)
+
+
+
+
+
+
+
+
+
+
+
+import replicate
 import os
 from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
-import time
-from pydantic import BaseModel
-from langchain_community.chat_models import ChatOllama
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+
+
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}) 
 
-class SuggestionRequest(BaseModel):
-    database: str
-    backendEnvironment: str
-    backendFramework: str
-    backendLanguage: str
-    frontendBuildTool: str
-    frontendFramework: str
-    frontendLanguage: str
+
+
 
 def generate_response(input_text: str):
-    llm = ChatOllama(
-        model="llama3",
-        keep_alive=-1,
-        temperature=1.0,
-        max_new_tokens=256
-    )
+    response_text = ""
 
-    prompt = ChatPromptTemplate.from_template("Provide a project idea for developers based on these technologies and give a brief description of the implementation: {input}")
-    chain = prompt | llm | StrOutputParser()
+    for event in replicate.stream(
+            "meta/meta-llama-3-8b",
+            input={
+                "top_p": 0.9,
+                "prompt": f"Provide one project idea for developers based on these technologies : {input_text} and give a brief description of the implementation.In the end write in 2 sentences how this project can strengthen your skills. Do not provide me with code information throught your answer.",
+                "max_tokens": 500,
+                "min_tokens": 256,
+                "temperature": 0.5,
+                "prompt_template": "{prompt}",
+                "presence_penalty": 1.15
+            },
+        ):
+            response_text += str(event)  # Accumulate the response text
 
-    try:
-        for result in chain.stream({"input": input_text}):
-            yield f"{result} "
-    except Exception as e:
-        yield f"Error generating suggestions: {e}"
+    return response_text
+
+
 
 
 
@@ -42,18 +103,23 @@ def generate_response(input_text: str):
 def process():
     data = request.get_json()
     input_text = f"""
-    Database: {data['database']}
-    Backend Environment: {data['backendEnvironment']}
-    Backend Framework: {data['backendFramework']}
-    Backend Language: {data['backendLanguage']}
-    Frontend Build Tool: {data['frontendBuildTool']}
-    Frontend Framework: {data['frontendFramework']}
+    Database: {data['database']},
+    Backend Environment: {data['backendEnvironment']},
+    Backend Framework: {data['backendFramework']},
+    Backend Language: {data['backendLanguage']},
+    Frontend Build Tool: {data['frontendBuildTool']},
+    Frontend Framework: {data['frontendFramework']},
     Frontend Language: {data['frontendLanguage']}
     """
 
-    return Response(generate_response(input_text), mimetype='text/plain')
+    # Call generate_response to get the response text
+    response_text = generate_response(input_text)
+
+    return jsonify({"response": response_text})
+
+
+
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 11434))
+    port = int(os.environ.get('PORT', 8000))
     app.run(host='localhost', port=port)
-
